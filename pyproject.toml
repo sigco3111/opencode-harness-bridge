@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opencode-harness-bridge"
+version = "0.1.0"
+description = "OpenCode harness bridge — safely migrate Claude Code/Codex harnesses to OpenCode with 4-tier safety policy."
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+license = {text = "MIT"}
+authors = [
+  {name = "sigco3111"}
+]
+keywords = [
+  "opencode",
+  "claude-code",
+  "codex",
+  "harness",
+  "migration",
+  "mcp",
+  "oh-my-openagent",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "ruff",
+  "mypy",
+]
+
+[project.scripts]
+opencode-harness-bridge = "opencode_harness_bridge.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/sigco3111/opencode-harness-bridge"
+Issues = "https://github.com/sigco3111/opencode-harness-bridge/issues"
+Inspiration = "https://github.com/danyuchn/claude-codex-harness-sync"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "UP"]
