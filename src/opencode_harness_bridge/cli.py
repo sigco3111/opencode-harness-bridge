@@ -225,7 +225,6 @@ def _write_skills(out_dir: Path, fragments) -> None:
 def _cmd_convert(args: argparse.Namespace) -> int:
     """Produce a migration plan (dry-run default) or apply safe changes."""
     from opencode_harness_bridge.audit.classify import migrate
-    from opencode_harness_bridge.converters.claude_code_to_opencode import convert as cc_convert
 
     plan = migrate(
         source=args.source,
@@ -238,7 +237,18 @@ def _cmd_convert(args: argparse.Namespace) -> int:
     print(f"  workspace: {plan.workspace}")
     print(f"  mode:      {'apply-safe' if args.apply_safe else 'dry-run'}")
     print()
-    fragments = cc_convert(plan, strict_secrets=True)
+    if plan.source == "claude-code":
+        from opencode_harness_bridge.converters.claude_code_to_opencode import (
+            convert as cc_convert,
+        )
+        fragments = cc_convert(plan, strict_secrets=True)
+    elif plan.source == "codex":
+        from opencode_harness_bridge.converters import convert_codex_to_opencode
+
+        fragments = convert_codex_to_opencode(plan, strict_secrets=True)
+    else:
+        print(f"error: unsupported source: {plan.source!r}", file=sys.stderr)
+        return 2
     manual = fragments.get("manual_steps", [])
     auto = sum(1 for a in plan.assets if a.tier.value == "auto-apply-after-confirmation")
     print(f"Assets: {len(plan.assets)} total, {auto} auto-apply, {len(manual)} manual")
