@@ -26,6 +26,7 @@ heavy lifting (actual file modifications) is left to v0.2.0+ where the
 caller is responsible for invoking the model to apply model-assisted
 changes.
 """
+
 from __future__ import annotations
 
 __version__ = "0.2.0"
@@ -41,9 +42,11 @@ __all__ = [
 def __getattr__(name: str):
     """Lazy import to avoid forcing heavy imports on simple usage."""
     if name in ("HarnessAsset", "MigrationPlan", "SafetyTier"):
-        from .models import HarnessAsset, MigrationPlan, SafetyTier
+        from .models import HarnessAsset, MigrationPlan, SafetyTier  # noqa: F401
+
         return locals()[name]
     if name == "migrate":
         from .audit.classify import migrate
+
         return migrate
     raise AttributeError(f"module 'opencode_harness_bridge' has no attribute {name!r}")

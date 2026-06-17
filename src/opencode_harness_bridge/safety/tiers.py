@@ -16,6 +16,7 @@ in depth**:
 The default is to *flag, never silently pass through* — any uncertain
 match escalates to ``user-owned-secret-step``.
 """
+
 from __future__ import annotations
 
 from opencode_harness_bridge.models import SafetyTier
@@ -71,15 +72,15 @@ def classify_asset(source: str, kind: str) -> SafetyTier:
 # We prefer false negatives (let it through to user review) over false
 # positives (block a legitimate asset). v0.2.0 may expand.
 _SECRET_PATTERNS: tuple[str, ...] = (
-    r"sk-[A-Za-z0-9]{20,}",                  # OpenAI
-    r"sk-ant-[A-Za-z0-9\-]{20,}",            # Anthropic
-    r"sk-or-[A-Za-z0-9\-]{20,}",             # OpenRouter
-    r"ghp_[A-Za-z0-9]{30,}",                 # GitHub PAT
-    r"github_pat_[A-Za-z0-9_]{50,}",         # GitHub fine-grained PAT
-    r"xai-[A-Za-z0-9]{20,}",                 # xAI
-    r"AKIA[0-9A-Z]{16}",                     # AWS access key
-    r"AIza[0-9A-Za-z\-_]{35}",               # Google API key
-    r"-----BEGIN [A-Z ]*PRIVATE KEY-----",   # PEM private keys
+    r"sk-[A-Za-z0-9]{20,}",  # OpenAI
+    r"sk-ant-[A-Za-z0-9\-]{20,}",  # Anthropic
+    r"sk-or-[A-Za-z0-9\-]{20,}",  # OpenRouter
+    r"ghp_[A-Za-z0-9]{30,}",  # GitHub PAT
+    r"github_pat_[A-Za-z0-9_]{50,}",  # GitHub fine-grained PAT
+    r"xai-[A-Za-z0-9]{20,}",  # xAI
+    r"AKIA[0-9A-Z]{16}",  # AWS access key
+    r"AIza[0-9A-Za-z\-_]{35}",  # Google API key
+    r"-----BEGIN [A-Z ]*PRIVATE KEY-----",  # PEM private keys
 )
 
 

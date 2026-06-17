@@ -1,4 +1,5 @@
 """Smoke tests for the 4-tier safety model and secret detection."""
+
 from __future__ import annotations
 
 from opencode_harness_bridge.safety.tiers import (

@@ -22,8 +22,6 @@ Common helpers (TOML/JSON parsing, Markdown frontmatter) live in
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from opencode_harness_bridge.models import MigrationPlan
 
 __all__ = ["convert_claude_code_to_opencode", "convert_codex_to_opencode"]

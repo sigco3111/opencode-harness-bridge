@@ -58,3 +58,6 @@ coverage.xml
 
 # OS
 Thumbs.db
+
+# OhMyOpenCode internal state
+.omo/

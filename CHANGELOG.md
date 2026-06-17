@@ -22,7 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `tests/test_inventory_classify.py`, `tests/test_converters.py`, `tests/test_cli.py`: dropped "v0.1.0 stub" assertions, now assert real behavior
-- Test count: 18 → 42
+- `src/opencode_harness_bridge/__main__.py`: add `sys.exit(main())` so non-zero exit codes propagate
+- `.gitignore`: add `.opencode-out/` to prevent committing test artifacts
+- Test count: 31 → 59 (+28 new tests, 6 existing rewritten)
+- All 7 manual scenarios (S1-S7) verified PASS
 
 ### Notes
 - Strict-mode secret detection is the default. `--allow-secret-escalation` flag is reserved for a future minor release.

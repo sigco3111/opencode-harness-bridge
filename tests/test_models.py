@@ -1,4 +1,5 @@
 """Smoke tests for domain models (v0.1.0)."""
+
 from __future__ import annotations
 
 import dataclasses
@@ -72,10 +73,18 @@ def test_migration_plan_summary_counts_tiers() -> None:
         target="opencode",
         workspace=Path("/tmp/proj"),
         assets=(
-            HarnessAsset(path=Path("a"), kind="instruction", source="claude-code", tier=SafetyTier.AUTO_APPLY),
-            HarnessAsset(path=Path("b"), kind="instruction", source="claude-code", tier=SafetyTier.AUTO_APPLY),
-            HarnessAsset(path=Path("c"), kind="hook", source="claude-code", tier=SafetyTier.MODEL_ASSISTED),
-            HarnessAsset(path=Path("d"), kind="secret", source="claude-code", tier=SafetyTier.USER_OWNED),
+            HarnessAsset(
+                path=Path("a"), kind="instruction", source="claude-code", tier=SafetyTier.AUTO_APPLY
+            ),
+            HarnessAsset(
+                path=Path("b"), kind="instruction", source="claude-code", tier=SafetyTier.AUTO_APPLY
+            ),
+            HarnessAsset(
+                path=Path("c"), kind="hook", source="claude-code", tier=SafetyTier.MODEL_ASSISTED
+            ),
+            HarnessAsset(
+                path=Path("d"), kind="secret", source="claude-code", tier=SafetyTier.USER_OWNED
+            ),
         ),
     )
     s = plan.summary()

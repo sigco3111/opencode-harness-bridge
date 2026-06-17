@@ -10,6 +10,7 @@ v0.1.0 stub: returns an empty MigrationPlan. v0.2.0:
 
 The high-level :func:`migrate` function is the public entry point.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

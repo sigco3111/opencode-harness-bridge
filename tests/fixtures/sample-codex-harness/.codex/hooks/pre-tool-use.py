@@ -3,6 +3,7 @@
 
 Codex hooks are Python files. v0.3.0+ will wrap these in a shell-callable form for OpenCode.
 """
+
 import json
 import sys
 

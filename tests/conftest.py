@@ -10,6 +10,7 @@ v0.2.0+: generate a more realistic fixture (with actual CLAUDE.md
 content, multiple agent files, MCP server entries, etc.) under
 ``tests/fixtures/sample-claude-harness/`` and check it in.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -40,7 +41,6 @@ def tmp_codex_workspace(tmp_path: Path) -> Path:
     (ws / ".codex" / "agents").mkdir()
     (ws / ".codex" / "hooks").mkdir()
     return ws
-
 
 
 @pytest.fixture

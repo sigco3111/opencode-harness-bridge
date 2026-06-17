@@ -9,6 +9,7 @@ Keep this file dependency-free. Add new subclasses only when a *new class*
 of error is possible (e.g. ``SecretLeakError`` is a *critical* subclass
 that callers may want to handle differently from generic errors).
 """
+
 from __future__ import annotations
 
 

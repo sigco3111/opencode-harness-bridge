@@ -17,15 +17,16 @@ We use StrEnum (Python 3.11+) for two reasons:
 2. Can be compared to plain strings (``tier == "auto-apply"`` works)
 If you need older Python support, switch to ``class SafetyTier(str, Enum)``.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from pathlib import Path
 
 
-class SafetyTier(str, Enum):
+class SafetyTier(StrEnum):
     """4-tier safety classification for harness migration.
 
     The first 3 tiers are borrowed from
@@ -103,7 +104,7 @@ class MigrationPlan:
     target: TargetFormat
     workspace: Path
     assets: tuple[HarnessAsset, ...] = ()
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict:
         return {

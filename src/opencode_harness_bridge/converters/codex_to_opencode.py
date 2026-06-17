@@ -1,4 +1,5 @@
 """Codex → OpenCode converter (v0.1.0 stub)."""
+
 from __future__ import annotations
 
 from opencode_harness_bridge.models import MigrationPlan
