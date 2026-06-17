@@ -1,0 +1,7 @@
+[agent]
+name = "example"
+description = "Example Codex agent for S12 fixture"
+
+[behavior]
+tone = "concise"
+constraints = ["no secrets inline", "always cite sources"]
