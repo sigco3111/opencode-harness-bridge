@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-06-17
 
+## [0.3.0] - 2026-06-17
+
+### Added
+- Real Codex inventory scanner (`audit/inventory.py:scan_codex`) — discovers 5 asset kinds: instruction (AGENTS.md), agent (.codex/agents/*.toml), mcp_server (.codex/config.toml), hook (.codex/hooks/*.py), memory (.codex/memories/*)
+- Real Codex → OpenCode converter (`converters/codex_to_opencode.py:convert`) — produces the 5-key schema mirroring the Claude converter
+- `convert_codex_to_opencode()` dispatcher wired in `converters/__init__.py` (parity with Claude)
+- Codex mcp_server env-var placeholders (`${KEY}`) — NEVER inline literal values, same safety as Claude path
+- Codex hooks (Python files) → `manual_steps` with action "wrap Python hook as shell-callable for OpenCode"
+- Codex memories → `manual_steps` with action "v0.4.0+ will add wiki/ mapping for Codex memories"
+- 2 new checked-in Codex fixtures: `sample-codex-harness-with-secret/` (S12), `sample-codex-harness-malformed-toml/` (S14)
+- 4 new test modules: `test_inventory_codex.py` (8 tests), `test_codex_to_opencode_real.py` (8 tests), updated `test_inventory_classify.py` and `test_converters.py`
+- 3 new conftest fixtures: `sample_codex_harness`, `sample_codex_harness_with_secret`, `sample_codex_harness_malformed_toml`
+
+### Changed
+- `tmp_codex_workspace` fixture now includes a sample hook file (`.codex/hooks/pre-tool-use.py`) so hook discovery tests have something to find
+- Test count: 59 → 75 (+16 new tests, 2 existing rewritten for real behavior)
+
+### Notes
+- All 7 new manual scenarios (S8-S14) verified PASS
+- v0.3.0 retains zero runtime dependencies (stdlib only: pathlib, json, tomllib, re, dataclasses, enum, argparse)
+- Codex hooks remain model-assisted tier (Python files cannot be auto-converted to OpenCode's shell-callable format in v0.3.0)
+- Memories → `manual_steps` only; the wiki/ mapping is planned for v0.4.0
+
 ### Added
 - Real Claude Code inventory scanner (`audit/inventory.py`)
 - Real Claude Code → OpenCode converter (`converters/claude_code_to_opencode.py`)
