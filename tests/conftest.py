@@ -70,3 +70,23 @@ def sample_claude_harness_malformed_settings() -> Path:
     Used in tests that verify graceful handling of malformed settings files.
     """
     return Path(__file__).parent / "fixtures" / "sample-claude-harness-malformed-settings"
+
+
+@pytest.fixture
+def sample_codex_harness_with_secret() -> Path:
+    """Real, checked-in Codex harness fixture containing a synthetic sk-... secret.
+
+    Used in tests that exercise the SecretLeakError path for the Codex
+    converter (scenario S12).
+    """
+    return Path(__file__).parent / "fixtures" / "sample-codex-harness-with-secret"
+
+
+@pytest.fixture
+def sample_codex_harness_malformed_toml() -> Path:
+    """Real, checked-in Codex harness fixture with intentionally invalid config.toml.
+
+    Used in tests that verify graceful handling of malformed TOML
+    in the Codex scanner (scenario S14).
+    """
+    return Path(__file__).parent / "fixtures" / "sample-codex-harness-malformed-toml"
