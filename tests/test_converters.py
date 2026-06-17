@@ -21,8 +21,11 @@ def test_claude_code_converter_returns_full_schema(sample_claude_harness: Path) 
     assert result != {}, "Real converter returned an empty dict (looks like a stub)"
 
 
-def test_codex_converter_still_stub(tmp_codex_workspace: Path) -> None:
-    """v0.3.0+ stub: codex converter still returns an empty dict."""
+def test_codex_converter_returns_full_schema(tmp_codex_workspace: Path) -> None:
+    """v0.3.0: real codex converter returns the 5-key schema, not an empty dict."""
     plan = migrate(source="codex", target="opencode", workspace=tmp_codex_workspace)
     result = convert_codex_to_opencode(plan)
-    assert result == {}
+    assert isinstance(result, dict)
+    for key in ("opencode_json_blocks", "agents_md_blocks", "skills", "commands", "manual_steps"):
+        assert key in result, f"missing key: {key}"
+    assert result != {}, "Real converter returned an empty dict (looks like a stub)"
