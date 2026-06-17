@@ -81,7 +81,7 @@ def sample_claude_harness_malformed_settings() -> Path:
 
 @pytest.fixture
 def sample_codex_harness() -> Path:
-    """Real, checked-in Codex harness fixture (5 files: instruction, agent, mcp_server, hook, memory).
+    """Real, checked-in Codex harness fixture (instruction, agent, mcp_server, hook, memory).
 
     Used in tests that exercise the real Codex scanner + converter paths.
     """

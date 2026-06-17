@@ -250,7 +250,10 @@ def _emit_codex_memory(workspace: Path, path: Path) -> HarnessAsset:
 
 
 def _emit_codex_from_config(workspace: Path, config_path: Path) -> tuple[HarnessAsset, ...]:
-    """Parse .codex/config.toml (or settings.toml) and emit mcp_server assets. Graceful on parse error."""
+    """Parse .codex/config.toml (or settings.toml) and emit mcp_server assets.
+
+    Returns an empty tuple on parse error (no crash).
+    """
     import tomllib
 
     try:
