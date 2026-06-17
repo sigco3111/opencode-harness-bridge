@@ -19,7 +19,7 @@ def test_cli_version() -> None:
         cwd=Path(__file__).parent.parent / "src",
     )
     assert result.returncode == 0
-    assert "opencode-harness-bridge 0.3.0" in result.stdout
+    assert "opencode-harness-bridge 0.4.0" in result.stdout
 
 
 def test_cli_help() -> None:
@@ -126,3 +126,20 @@ def test_cli_validate_missing_target(tmp_path: Path) -> None:
     )
     assert result.returncode == 2
     assert "does not exist" in result.stderr
+
+
+def test_cli_maintain_missing_target(tmp_path: Path) -> None:
+    """v0.4.0: `maintain` with non-existent --target-dir exits 2 with error to stderr."""
+    result = subprocess.run(
+        [
+            sys.executable, "-m", "opencode_harness_bridge",
+            "maintain",
+            "--source", "claude-code",
+            "--workspace", str(tmp_path),  # workspace path doesn't matter
+            "--target-dir", str(tmp_path / "does-not-exist"),
+        ],
+        capture_output=True, text=True,
+        cwd=Path(__file__).parent.parent / "src",
+    )
+    assert result.returncode == 2, f"stderr: {result.stderr}"
+    assert "does not exist" in result.stderr, f"stderr: {result.stderr}"
