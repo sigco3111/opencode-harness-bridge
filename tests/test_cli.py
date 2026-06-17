@@ -13,7 +13,7 @@ def test_cli_version() -> None:
         cwd=Path(__file__).parent.parent / "src",
     )
     assert result.returncode == 0
-    assert "opencode-harness-bridge 0.1.0" in result.stdout
+    assert "opencode-harness-bridge 0.2.0" in result.stdout
 
 
 def test_cli_help() -> None:
