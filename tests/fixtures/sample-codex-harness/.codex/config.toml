@@ -1,0 +1,7 @@
+[project]
+name = "sample-codex-harness"
+version = "0.1.0"
+
+[mcp_servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
