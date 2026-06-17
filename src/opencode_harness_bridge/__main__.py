@@ -12,9 +12,12 @@ Implementation note (for other-PC worker)
 ----------------------------------------
 This is a thin shim. CLI logic lives in :mod:`opencode_harness_bridge.cli`.
 """
+
 from __future__ import annotations
+
+import sys
 
 from opencode_harness_bridge.cli import main
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

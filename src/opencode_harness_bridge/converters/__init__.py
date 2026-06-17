@@ -19,30 +19,24 @@ Trade-off: shared utilities
 Common helpers (TOML/JSON parsing, Markdown frontmatter) live in
 :mod:`converters.shared`. v0.2.0 will build that module first.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
-from opencode_harness_bridge.models import HarnessAsset, MigrationPlan
+from opencode_harness_bridge.models import MigrationPlan
 
 __all__ = ["convert_claude_code_to_opencode", "convert_codex_to_opencode"]
 
 
-def convert_claude_code_to_opencode(plan: MigrationPlan) -> dict:
+def convert_claude_code_to_opencode(plan: MigrationPlan, *, strict_secrets: bool = True) -> dict:
     """Convert a Claude Code MigrationPlan into OpenCode config fragments.
 
-    v0.1.0 stub: returns an empty dict. v0.2.0 produces:
-
-    >>> {
-    ...     "opencode_json_blocks": {...},   # merge into ~/.config/opencode/opencode.json
-    ...     "agents_md_blocks": [...],       # for AGENTS.md layering
-    ...     "skills": [...],                 # for .opencode/skills/*
-    ...     "commands": [...],               # for ~/.config/opencode/command/*
-    ...     "manual_steps": [...],           # for model-assisted / user-owned items
-    ... }
+    v0.2.0: delegates to :func:`opencode_harness_bridge.converters.claude_code_to_opencode.convert`.
     """
-    _ = plan
-    return {}
+    from opencode_harness_bridge.converters.claude_code_to_opencode import convert
+
+    return convert(plan, strict_secrets=strict_secrets)
 
 
 def convert_codex_to_opencode(plan: MigrationPlan) -> dict:

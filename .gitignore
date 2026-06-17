@@ -48,6 +48,7 @@ coverage.xml
 
 # Harness migration artifacts (intentionally not committed)
 .opencode-migration/
+.opencode-out/
 .migration-cache/
 *.migration-backup/
 
