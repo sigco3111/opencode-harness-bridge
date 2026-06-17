@@ -1,0 +1,7 @@
+[agent]
+name = "healthy-agent"
+description = "A normal agent in a fixture with broken config.toml"
+
+[behavior]
+tone = "concise"
+constraints = ["normal behavior"]
