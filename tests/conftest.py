@@ -40,3 +40,33 @@ def tmp_codex_workspace(tmp_path: Path) -> Path:
     (ws / ".codex" / "agents").mkdir()
     (ws / ".codex" / "hooks").mkdir()
     return ws
+
+
+
+@pytest.fixture
+def sample_claude_harness() -> Path:
+    """Real, checked-in Claude Code harness fixture (10 files, 6 asset kinds).
+
+    Use this in tests that need a stable, version-controlled Claude harness.
+    Differs from `tmp_claude_workspace` (which is ephemeral) in that it
+    survives the test run and can be inspected manually.
+    """
+    return Path(__file__).parent / "fixtures" / "sample-claude-harness"
+
+
+@pytest.fixture
+def sample_claude_harness_with_secret() -> Path:
+    """Claude Code harness fixture containing a synthetic sk-... secret.
+
+    Used in tests that exercise the SecretLeakError path (scenario S6).
+    """
+    return Path(__file__).parent / "fixtures" / "sample-claude-harness-with-secret"
+
+
+@pytest.fixture
+def sample_claude_harness_malformed_settings() -> Path:
+    """Claude Code harness fixture with intentionally invalid settings.json.
+
+    Used in tests that verify graceful handling of malformed settings files.
+    """
+    return Path(__file__).parent / "fixtures" / "sample-claude-harness-malformed-settings"
