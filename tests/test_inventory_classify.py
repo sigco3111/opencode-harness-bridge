@@ -1,4 +1,4 @@
-"""Smoke tests for the inventory scanner (v0.2.0 real scanner)."""
+"""Smoke tests for the inventory scanner (v0.3.0 real scanners)."""
 
 from __future__ import annotations
 
@@ -18,10 +18,15 @@ def test_scan_claude_code_discovers_assets(tmp_claude_workspace: Path) -> None:
     assert any(a.kind == "instruction" and a.path.name == "CLAUDE.md" for a in assets)
 
 
-def test_scan_codex_stub_returns_empty(tmp_codex_workspace: Path) -> None:
-    """v0.3.0+ stub: codex scanner still returns empty tuple."""
+def test_scan_codex_finds_real_assets(tmp_codex_workspace: Path) -> None:
+    """v0.3.0: real scanner finds the AGENTS.md instruction in the tmp codex workspace."""
     assets = scan("codex", tmp_codex_workspace)
-    assert assets == ()
+    # tmp_codex_workspace has AGENTS.md + .codex/agents/ + .codex/hooks/
+    # Real scanner must find at least 1 instruction + 1 hook
+    assert any(a.kind == "instruction" and a.path.name == "AGENTS.md" for a in assets), (
+        f"Expected AGENTS.md instruction, got: {assets}"
+    )
+    assert any(a.kind == "hook" for a in assets), f"Expected at least 1 hook, got: {assets}"
 
 
 def test_scan_rejects_unknown_source(tmp_path: Path) -> None:
