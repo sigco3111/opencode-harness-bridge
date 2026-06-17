@@ -37,11 +37,11 @@ def convert_claude_code_to_opencode(plan: MigrationPlan, *, strict_secrets: bool
     return convert(plan, strict_secrets=strict_secrets)
 
 
-def convert_codex_to_opencode(plan: MigrationPlan) -> dict:
+def convert_codex_to_opencode(plan: MigrationPlan, *, strict_secrets: bool = True) -> dict:
     """Convert a Codex MigrationPlan into OpenCode config fragments.
 
-    v0.1.0 stub. v0.3.0+ implements real conversion. Many maps with
-    :func:`opencode_trading.convert_workspace` (sister project).
+    v0.3.0: delegates to :func:`opencode_harness_bridge.converters.codex_to_opencode.convert`.
     """
-    _ = plan
-    return {}
+    from opencode_harness_bridge.converters.codex_to_opencode import convert
+
+    return convert(plan, strict_secrets=strict_secrets)

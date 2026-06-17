@@ -40,6 +40,13 @@ def tmp_codex_workspace(tmp_path: Path) -> Path:
     (ws / ".codex").mkdir()
     (ws / ".codex" / "agents").mkdir()
     (ws / ".codex" / "hooks").mkdir()
+    (ws / ".codex" / "hooks" / "pre-tool-use.py").write_text(
+        "import json, sys\n"
+        "def main():\n"
+        "    payload = json.load(sys.stdin)\n"
+        "    print(f\"hook invoked: {payload.get('tool_name', '')}\")\n"
+        "    return 0\n"
+    )
     return ws
 
 

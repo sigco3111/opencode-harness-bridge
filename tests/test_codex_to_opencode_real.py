@@ -4,6 +4,7 @@ These tests are the RED phase of TDD — they MUST fail against the current
 convert() stub (which returns {}). The GREEN implementation in T3.2 will
 make them pass.
 """
+
 from __future__ import annotations
 
 import json
@@ -12,16 +13,14 @@ from pathlib import Path
 import pytest
 
 from opencode_harness_bridge.audit.classify import migrate
-from opencode_harness_bridge.converters.codex_to_opencode import convert
 from opencode_harness_bridge.converters import convert_codex_to_opencode
+from opencode_harness_bridge.converters.codex_to_opencode import convert
 from opencode_harness_bridge.exceptions import SecretLeakError
-from opencode_harness_bridge.models import HarnessAsset, MigrationPlan, SafetyTier
+from opencode_harness_bridge.models import HarnessAsset, MigrationPlan
 
 
 def _make_plan_with_one_asset(asset: HarnessAsset, workspace: Path) -> MigrationPlan:
-    return MigrationPlan(
-        source="codex", target="opencode", workspace=workspace, assets=(asset,)
-    )
+    return MigrationPlan(source="codex", target="opencode", workspace=workspace, assets=(asset,))
 
 
 # ---- Schema / happy path -------------------------------------------------
@@ -97,9 +96,7 @@ def test_convert_raises_secretleak_on_synthetic_secret(
     sample_codex_harness_with_secret: Path,
 ) -> None:
     """strict_secrets=True + secret in AUTO_APPLY content → SecretLeakError."""
-    plan = migrate(
-        source="codex", target="opencode", workspace=sample_codex_harness_with_secret
-    )
+    plan = migrate(source="codex", target="opencode", workspace=sample_codex_harness_with_secret)
     with pytest.raises(SecretLeakError):
         convert(plan, strict_secrets=True)
 

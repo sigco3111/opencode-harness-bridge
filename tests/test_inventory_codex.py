@@ -4,14 +4,14 @@ These tests are the RED phase of TDD — they MUST fail against the current
 scan_codex() stub (which returns ()). The GREEN implementation in T3.1
 will make them pass.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
 
-from opencode_harness_bridge.audit.inventory import scan
-from opencode_harness_bridge.audit.inventory import scan_codex
+from opencode_harness_bridge.audit.inventory import scan, scan_codex
 from opencode_harness_bridge.models import SafetyTier
 
 
@@ -114,4 +114,6 @@ def test_scan_skips_heavy_directories_in_codex(tmp_path: Path) -> None:
     paths = [a.path for a in assets]
     assert any(p.name == "AGENTS.md" and p.parent == ws for p in paths)
     for heavy in [".git", "node_modules", "__pycache__", "dist", "build", "venv"]:
-        assert not any(heavy in p.parts for p in paths), f"{heavy}/AGENTS.md was incorrectly discovered"
+        assert not any(heavy in p.parts for p in paths), (
+            f"{heavy}/AGENTS.md was incorrectly discovered"
+        )

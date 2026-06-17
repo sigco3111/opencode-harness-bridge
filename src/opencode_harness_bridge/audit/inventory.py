@@ -8,11 +8,17 @@ v0.2.0: real Claude Code scanner. Discovers 6 asset kinds:
 - ``mcp_server`` from .claude/settings*.json -> mcpServers
 - ``hook`` from .claude/settings*.json -> hooks events
 
+v0.3.0: real Codex scanner. Discovers 5 asset kinds:
+- ``instruction`` from top-level AGENTS.md
+- ``agent`` from .codex/agents/*.toml
+- ``mcp_server`` from .codex/config.toml + .codex/settings.toml -> [mcp_servers.*]
+- ``hook`` from .codex/hooks/*.py
+- ``memory`` from .codex/memories/*
+
 Heavy directories are pruned: .git, node_modules, __pycache__, dist,
 build, venv, .venv, vendor, .opencode-migration, .migration-cache.
 
-Malformed settings.json files are skipped silently (no crash).
-Codex scanner remains a stub (v0.3.0+).
+Malformed settings.json / config.toml files are skipped silently (no crash).
 """
 
 from __future__ import annotations
@@ -199,13 +205,127 @@ def scan_claude_code(workspace: Path) -> tuple[HarnessAsset, ...]:
     return tuple(assets)
 
 
+def _emit_codex_instruction(workspace: Path, path: Path) -> HarnessAsset:
+    return HarnessAsset(
+        path=path,
+        kind="instruction",
+        source="codex",
+        tier=classify_asset("codex", "instruction"),
+        description=f"Project instructions ({path.name})",
+        content_preview=_read_preview(path),
+    )
+
+
+def _emit_codex_agent(workspace: Path, path: Path) -> HarnessAsset:
+    return HarnessAsset(
+        path=path,
+        kind="agent",
+        source="codex",
+        tier=classify_asset("codex", "agent"),
+        description=f"Agent ({path.stem})",
+        content_preview=_read_preview(path),
+    )
+
+
+def _emit_codex_hook(workspace: Path, path: Path) -> HarnessAsset:
+    return HarnessAsset(
+        path=path,
+        kind="hook",
+        source="codex",
+        tier=classify_asset("codex", "hook"),
+        description=f"Hook ({path.name})",
+        content_preview=_read_preview(path),
+    )
+
+
+def _emit_codex_memory(workspace: Path, path: Path) -> HarnessAsset:
+    return HarnessAsset(
+        path=path,
+        kind="memory",
+        source="codex",
+        tier=classify_asset("codex", "memory"),
+        description=f"Memory ({path.name})",
+        content_preview=_read_preview(path),
+    )
+
+
+def _emit_codex_from_config(workspace: Path, config_path: Path) -> tuple[HarnessAsset, ...]:
+    """Parse .codex/config.toml (or settings.toml) and emit mcp_server assets. Graceful on parse error."""
+    import tomllib
+
+    try:
+        data = tomllib.loads(config_path.read_text(encoding="utf-8", errors="replace"))
+    except (tomllib.TOMLDecodeError, OSError):
+        return ()
+    if not isinstance(data, dict):
+        return ()
+    out: list[HarnessAsset] = []
+    mcp_servers = data.get("mcp_servers", {})
+    if isinstance(mcp_servers, dict):
+        for name in mcp_servers:
+            if isinstance(name, str):
+                out.append(
+                    HarnessAsset(
+                        path=config_path,
+                        kind="mcp_server",
+                        source="codex",
+                        tier=classify_asset("codex", "mcp_server"),
+                        description=f"MCP server ({name})",
+                        content_preview="",
+                    )
+                )
+    return tuple(out)
+
+
 def scan_codex(workspace: Path) -> tuple[HarnessAsset, ...]:
     """Discover Codex harness assets in ``workspace``.
 
-    v0.1.0/v0.2.0 stub: returns an empty tuple (full implementation in v0.3.0+).
+    Discovers:
+    - top-level AGENTS.md -> kind="instruction"
+    - .codex/agents/*.toml -> kind="agent"
+    - .codex/config.toml + .codex/settings.toml -> one mcp_server per [mcp_servers.*] entry
+    - .codex/hooks/*.py -> kind="hook" (1 per file)
+    - .codex/memories/* -> kind="memory" (1 per file)
+
+    Heavy directories are pruned; malformed config.toml files are skipped silently.
     """
-    _ = workspace
-    return ()
+    if not workspace.is_dir():
+        return ()
+    assets: list[HarnessAsset] = []
+    config_paths: list[Path] = []
+    for path, is_dir in _walk(workspace):
+        if is_dir:
+            continue
+        rel = path.relative_to(workspace)
+        parts = rel.parts
+        name = path.name
+        if len(parts) == 1 and name == "AGENTS.md":
+            assets.append(_emit_codex_instruction(workspace, path))
+        elif (
+            len(parts) == 3
+            and parts[0] == ".codex"
+            and parts[1] == "agents"
+            and name.endswith(".toml")
+        ):
+            assets.append(_emit_codex_agent(workspace, path))
+        elif (
+            len(parts) == 3
+            and parts[0] == ".codex"
+            and parts[1] == "hooks"
+            and name.endswith(".py")
+        ):
+            assets.append(_emit_codex_hook(workspace, path))
+        elif len(parts) >= 3 and parts[0] == ".codex" and parts[1] == "memories":
+            assets.append(_emit_codex_memory(workspace, path))
+        elif (
+            len(parts) == 2
+            and parts[0] == ".codex"
+            and (name == "config.toml" or name == "settings.toml")
+        ):
+            config_paths.append(path)
+    for cfg in config_paths:
+        assets.extend(_emit_codex_from_config(workspace, cfg))
+    return tuple(assets)
 
 
 SCANNERS: dict[str, object] = {
