@@ -241,6 +241,7 @@ def _cmd_convert(args: argparse.Namespace) -> int:
         from opencode_harness_bridge.converters.claude_code_to_opencode import (
             convert as cc_convert,
         )
+
         fragments = cc_convert(plan, strict_secrets=True)
     elif plan.source == "codex":
         from opencode_harness_bridge.converters import convert_codex_to_opencode
