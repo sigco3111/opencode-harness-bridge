@@ -140,7 +140,8 @@ pytest -v
 | **v0.1.0** | Phase 0: 스켈레톤 + 4-tier 정책 + 인벤토리 스텁 | ✅ 진행 중 / In progress |
 | **v0.2.0** | Claude Code → OpenCode 변환기 + 30+ 테스트 + 실제 fixture | 📋 예정 / Planned |
 | **v0.3.0** | Codex → OpenCode 변환기 (opencode-trading과 통합) | 📋 예정 / Planned |
-| **v0.4.0** | 양방향 동기화 (`migrate maintain` — claude-codex-harness-sync 차용) | 📋 예정 / Planned |
+| **v0.4.0** | 양방향 동기화 (`migrate maintain` — claude-codex-harness-sync 차용) | ✅ 출시됨 / Shipped (2026-06-18) |
+| **v1.0.0** | OpenCode 마켓플레이스 등록, 안정화 (GA) | ✅ 출시됨 / Shipped (2026-06-18) |
 | **v1.0.0** | OpenCode 마켓플레이스 등록, 안정화 | 📋 예정 / Planned |
 
 ---
