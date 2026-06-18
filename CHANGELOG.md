@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-06-18
+
+### Added
+- OpenCode marketplace plugin structure: `command/opencode-harness-bridge.md` (CLI slash command) + `skill/harness-convert/SKILL.md` (migration guidance) + `.github/plugin/marketplace.json` (discovery manifest)
+- `.github/workflows/release.yml` — tag-driven build (sdist+wheel) + GitHub Release with attached artifacts
+- `.pre-commit-config.yaml` — ruff check/format + standard hygiene hooks (trailing-whitespace, end-of-file-fixer, check-yaml/json/toml)
+- `tests/test_release_readiness.py` — 8 invariants enforcing version sync, classifier, CI matrix, manifest schema across future bumps
+
+### Changed
+- `pyproject.toml`: version `0.4.0` → `1.0.0`; classifier `3 - Alpha` → `5 - Production/Stable`
+- `__version__` in `src/opencode_harness_bridge/__init__.py` aligned to `1.0.0`
+- `.github/workflows/ci.yml`: mypy is now blocking (removed `|| true` escape); Python 3.14 added to the test matrix
+- Dev extras: added `build>=1.0` and `twine>=5` for sdist/wheel build + validation (no PyPI publish in v1.0.0)
+
+### Notes
+- Public API frozen at v1.0.0: `migrate`, `maintain`, `HarnessAsset`, `MigrationPlan`, `SafetyTier`, `MaintenanceItem`, `MaintenanceReport`. No symbol renames or removals.
+- Zero runtime dependencies preserved (stdlib only: `pathlib`, `json`, `tomllib`, `re`, `dataclasses`, `enum`, `argparse`).
+- 86 tests in v0.4.0 + 8 new readiness tests = 94 tests in v1.0.0.
+- v1.0.0 is the first release to ship OpenCode marketplace artifacts and the first to have automated GitHub Release creation. The release workflow fires on `v*` tag push and attaches sdist + wheel to the GitHub Release.
+- PyPI publishing is intentionally out of scope for v1.0.0; only GitHub Releases ship artifacts.
+
 ## [0.4.0] - 2026-06-18
 
 ### Added
