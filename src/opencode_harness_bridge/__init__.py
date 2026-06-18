@@ -10,13 +10,16 @@ Public API
 - :class:`HarnessAsset` — domain model for a discovered harness item
 - :class:`MigrationPlan` — bundle of assets + tier classifications
 - :enum:`SafetyTier` — 4-tier classification enum
+- :func:`maintain` — report-only drift detection between source plan and target dir (v0.4.0+)
+- :class:`MaintenanceItem` — single asset diff entry in a maintenance report
+- :class:`MaintenanceReport` — full drift report (added / modified / removed / unchanged / manual)
 
 Example
 -------
-    >>> from opencode_harness_bridge import migrate
+    >>> from opencode_harness_bridge import migrate, maintain
     >>> plan = migrate(source="claude-code", target="opencode", workspace="~/proj")
-    >>> for asset in plan.assets:
-    ...     print(asset.path, asset.tier, asset.action)
+    >>> report = maintain(plan=plan, target_dir="~/.config/opencode")
+    >>> print(f"{len(report.added)} added, {len(report.modified)} modified")
 
 Note
 ----
@@ -33,8 +36,11 @@ __version__ = "0.4.0"
 
 __all__ = [
     "HarnessAsset",
+    "MaintenanceItem",
+    "MaintenanceReport",
     "MigrationPlan",
     "SafetyTier",
+    "maintain",
     "migrate",
 ]
 
@@ -49,4 +55,8 @@ def __getattr__(name: str):
         from .audit.classify import migrate
 
         return migrate
+    if name in ("MaintenanceItem", "MaintenanceReport", "maintain"):
+        from .sync import MaintenanceItem, MaintenanceReport, maintain  # noqa: F401
+
+        return locals()[name]
     raise AttributeError(f"module 'opencode_harness_bridge' has no attribute {name!r}")
