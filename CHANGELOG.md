@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-06-18
+
+### Added
+- Report-only `migrate maintain` subcommand (v0.4.0) — bidirectional drift detection between source workspace and target OpenCode directory
+- `sync.maintain()` function with two-tier diff strategy: surface set diff (agents/skills) + signature diff (per-block JSON canonicalization for `opencode.json`, exact-match for `AGENTS.md` and `skills/<name>.md`)
+- `sync.MaintenanceItem` and `sync.MaintenanceReport` frozen dataclasses — full report shape (added / modified / removed / unchanged_count / manual_steps)
+- `MaintenanceReport.to_dict()` for JSON serialization; `_render_maintain_markdown()` helper for human-readable output
+- `maintain` CLI subcommand: `--source {claude-code|codex}`, `--workspace`, `--target-dir`, `--format {markdown|json}` (default markdown)
+- `sync` module is report-only — NO file writes, NO backup, NO atomic write. User reviews the report and re-runs `convert --apply-safe` manually
+- Mcp blocks are excluded from `added`/`modified`/`unchanged` counts (they are MODEL_ASSISTED tier); they surface via `manual_steps` and the missing-section detector
+- 1 new test module: `tests/test_maintain.py` (8 tests) — covers added/unchanged/modified/removed/mixed/missing-file/manual-steps/InvalidTargetError
+- 3 new CLI tests in `tests/test_cli.py` — maintain missing-target (exit 2), markdown format, JSON format
+- Public API exports: `MaintenanceItem`, `MaintenanceReport`, `maintain` added to `opencode_harness_bridge.__init__`
+
+### Changed
+- `sync.py` refactored: extracted `_source_path_for`, `_expected_content_for`, `_read_target_state`, `_diff_agents`, `_diff_instruction`, `_diff_skills`, `_diff_missing_sections`, `_diff_removed`, `_build_manual_steps` helpers
+- `cli.py` refactored: extracted `_render_maintain_markdown` from `_cmd_maintain`
+- Test count: 75 → 86 (+11 new tests)
+
+### Notes
+- Content-only diff (sha256/JSON canonicalization) — ignores permissions, ownership, symlinks (Q1)
+- Report-only — does NOT apply, does NOT backup, does NOT atomic-write (Q2)
+- Adapted from `danyuchn/claude-codex-harness-sync` `migrate maintain` subcommand exactly
+- All 7 new manual scenarios (S15-S21) verified PASS
+- v0.4.0 retains zero runtime dependencies (stdlib only)
+
 ## [0.1.0] - 2026-06-17
 
 ## [0.2.0] - 2026-06-17
