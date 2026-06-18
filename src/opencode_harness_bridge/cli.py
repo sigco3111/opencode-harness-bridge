@@ -25,6 +25,7 @@ import argparse
 import sys
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 from opencode_harness_bridge import __version__
 
@@ -116,14 +117,22 @@ def _build_parser() -> argparse.ArgumentParser:
             "target OpenCode directory (no apply)"
         ),
     )
-    mtn.add_argument("--source", required=True, choices=["claude-code", "codex"],
-                     help="source harness format")
-    mtn.add_argument("--workspace", required=True, type=Path,
-                     help="source workspace to scan")
-    mtn.add_argument("--target-dir", required=True, type=Path,
-                     help="target OpenCode directory to compare against (e.g., ~/.config/opencode)")
-    mtn.add_argument("--format", choices=["markdown", "json"], default="markdown",
-                     help="output format (default: markdown)")
+    mtn.add_argument(
+        "--source", required=True, choices=["claude-code", "codex"], help="source harness format"
+    )
+    mtn.add_argument("--workspace", required=True, type=Path, help="source workspace to scan")
+    mtn.add_argument(
+        "--target-dir",
+        required=True,
+        type=Path,
+        help="target OpenCode directory to compare against (e.g., ~/.config/opencode)",
+    )
+    mtn.add_argument(
+        "--format",
+        choices=["markdown", "json"],
+        default="markdown",
+        help="output format (default: markdown)",
+    )
     mtn.set_defaults(handler=_cmd_maintain)
 
     return parser
@@ -341,6 +350,54 @@ def _cmd_validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _render_maintain_markdown(report: Any, workspace: Path) -> str:
+    """Render a :class:`MaintenanceReport` as a human-readable markdown string.
+
+    The output is composed of:
+    - A header block with version, source, workspace, and target
+    - A one-line summary (``Maintenance: N added, N modified, ...``)
+    - One section per non-empty list (Added / Modified / Removed)
+    - A trailing ``## Manual steps`` section if the report has any
+    """
+    from opencode_harness_bridge.sync import MaintenanceReport
+
+    assert isinstance(report, MaintenanceReport)
+    lines: list[str] = []
+    lines.append(f"opencode-harness-bridge {__version__} — maintain")
+    lines.append(f"  source:    {report.source}")
+    lines.append(f"  workspace: {workspace}")
+    lines.append(f"  target:    {report.target_dir}")
+    lines.append("")
+    n_total = (
+        len(report.added) + len(report.modified) + len(report.removed) + report.unchanged_count
+    )
+    lines.append(
+        f"Maintenance: {len(report.added)} added, {len(report.modified)} modified, "
+        f"{len(report.removed)} removed, {report.unchanged_count} unchanged "
+        f"({n_total} total)"
+    )
+
+    def _section(label: str, items: tuple) -> None:
+        if not items:
+            return
+        lines.append("")
+        lines.append(f"## {label} ({len(items)})")
+        for it in items:
+            lines.append(f"  - [{it.tier}] {it.kind} {it.target_subpath}  {it.description}")
+
+    _section("Added", report.added)
+    _section("Modified", report.modified)
+    _section("Removed", report.removed)
+
+    if report.manual_steps:
+        lines.append("")
+        lines.append(f"## Manual steps ({len(report.manual_steps)})")
+        for step in report.manual_steps:
+            lines.append(f"  - [{step['tier']}] {step['kind']}  {step['action']}")
+
+    return "\n".join(lines)
+
+
 def _cmd_maintain(args: argparse.Namespace) -> int:
     """Report-only drift detection (no apply)."""
     from opencode_harness_bridge.audit.classify import migrate
@@ -360,41 +417,11 @@ def _cmd_maintain(args: argparse.Namespace) -> int:
 
     if args.format == "json":
         import json as _json
+
         print(_json.dumps(report.to_dict()))
         return 0
 
-    print(f"opencode-harness-bridge {__version__} — maintain")
-    print(f"  source:    {report.source}")
-    print(f"  workspace: {plan.workspace}")
-    print(f"  target:    {report.target_dir}")
-    print()
-
-    # Markdown format: header + sections
-    n_total = (
-        len(report.added) + len(report.modified) + len(report.removed) + report.unchanged_count
-    )
-    print(
-        f"Maintenance: {len(report.added)} added, {len(report.modified)} modified, "
-        f"{len(report.removed)} removed, {report.unchanged_count} unchanged "
-        f"({n_total} total)"
-    )
-
-    def _emit_section(label: str, items: tuple) -> None:
-        if not items:
-            return
-        print(f"\n## {label} ({len(items)})")
-        for it in items:
-            print(f"  - [{it.tier}] {it.kind} {it.target_subpath}  {it.description}")
-
-    _emit_section("Added", report.added)
-    _emit_section("Modified", report.modified)
-    _emit_section("Removed", report.removed)
-
-    if report.manual_steps:
-        print(f"\n## Manual steps ({len(report.manual_steps)})")
-        for step in report.manual_steps:
-            print(f"  - [{step['tier']}] {step['kind']}  {step['action']}")
-
+    print(_render_maintain_markdown(report, plan.workspace))
     return 0
 
 
