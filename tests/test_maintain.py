@@ -13,6 +13,7 @@ v0.4.0 design notes
 * ``maintain`` raises ``InvalidTargetError`` if ``target_dir`` is not a
   directory (test 8 covers this).
 """
+
 from __future__ import annotations
 
 import json
@@ -23,7 +24,6 @@ import pytest
 from opencode_harness_bridge.audit.classify import migrate
 from opencode_harness_bridge.exceptions import InvalidTargetError
 from opencode_harness_bridge.sync import MaintenanceReport, maintain
-
 
 # ---- Happy path: empty target → all added ------------------------------
 
@@ -47,7 +47,9 @@ def test_maintain_added_when_target_missing(sample_claude_harness: Path, tmp_pat
 # ---- Unchanged: target matches source exactly ---------------------------
 
 
-def test_maintain_unchanged_when_target_matches(sample_claude_harness: Path, tmp_path: Path) -> None:
+def test_maintain_unchanged_when_target_matches(
+    sample_claude_harness: Path, tmp_path: Path
+) -> None:
     """Target already has matching content → 0 added, 0 modified, 0 removed."""
     # First, run convert to produce the expected target
     from opencode_harness_bridge.converters.claude_code_to_opencode import convert
@@ -131,11 +133,13 @@ def test_maintain_removed_when_target_has_extra_assets(
     target_dir.mkdir()
     # Write source's opencode.json PLUS an extra agent the source doesn't have
     modified_blocks = json.loads(json.dumps(fragments["opencode_json_blocks"]))
-    modified_blocks["agent"].append({
-        "name": "ghost-agent",
-        "description": "extra agent not in source",
-        "prompt": "This agent doesn't exist in source",
-    })
+    modified_blocks["agent"].append(
+        {
+            "name": "ghost-agent",
+            "description": "extra agent not in source",
+            "prompt": "This agent doesn't exist in source",
+        }
+    )
     (target_dir / "opencode.json").write_text(
         json.dumps(modified_blocks, indent=2) + "\n", encoding="utf-8"
     )
@@ -166,21 +170,19 @@ def test_maintain_mixed_add_modify_remove(sample_claude_harness: Path, tmp_path:
     modified_blocks = {"agent": []}
     # Agent 1: matching (will be unchanged)
     if len(fragments["opencode_json_blocks"].get("agent", [])) >= 1:
-        modified_blocks["agent"].append(
-            fragments["opencode_json_blocks"]["agent"][0]
-        )
+        modified_blocks["agent"].append(fragments["opencode_json_blocks"]["agent"][0])
     # Agent 2: modified (we'll write a target that has the same name but different content)
     if len(fragments["opencode_json_blocks"].get("agent", [])) >= 2:
-        modified_agent = json.loads(
-            json.dumps(fragments["opencode_json_blocks"]["agent"][1])
-        )
+        modified_agent = json.loads(json.dumps(fragments["opencode_json_blocks"]["agent"][1]))
         modified_blocks["agent"].append(modified_agent)
     # Agent 3: extra (not in source)
-    modified_blocks["agent"].append({
-        "name": "extra-agent-3",
-        "description": "extra",
-        "prompt": "extra",
-    })
+    modified_blocks["agent"].append(
+        {
+            "name": "extra-agent-3",
+            "description": "extra",
+            "prompt": "extra",
+        }
+    )
     (target_dir / "opencode.json").write_text(
         json.dumps(modified_blocks, indent=2) + "\n", encoding="utf-8"
     )
@@ -234,7 +236,9 @@ def test_maintain_includes_manual_steps_for_model_assisted(
 # ---- Error: target_dir does not exist ---------------------------------
 
 
-def test_maintain_raises_for_missing_target_dir(sample_claude_harness: Path, tmp_path: Path) -> None:
+def test_maintain_raises_for_missing_target_dir(
+    sample_claude_harness: Path, tmp_path: Path
+) -> None:
     """maintain() raises InvalidTargetError if target_dir doesn't exist."""
     plan = migrate(source="claude-code", target="opencode", workspace=sample_claude_harness)
     with pytest.raises(InvalidTargetError):
