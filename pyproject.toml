@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opencode-harness-bridge"
-version = "0.4.0"
+version = "1.0.0"
 description = "OpenCode harness bridge — safely migrate Claude Code/Codex harnesses to OpenCode with 4-tier safety policy."
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
@@ -22,7 +22,7 @@ keywords = [
   "oh-my-openagent",
 ]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 5 - Production/Stable",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
