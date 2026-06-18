@@ -1,0 +1,29 @@
+{
+  "name": "opencode-harness-bridge",
+  "owner": {
+    "name": "sigco3111",
+    "url": "https://github.com/sigco3111"
+  },
+  "plugins": [
+    {
+      "name": "opencode-harness-bridge",
+      "version": "1.0.0",
+      "description": "Migrate Claude Code / Codex harness to OpenCode with 4-tier safety policy.",
+      "license": "MIT",
+      "source": "./",
+      "homepage": "https://github.com/sigco3111/opencode-harness-bridge",
+      "commands": [
+        {
+          "name": "opencode-harness-bridge",
+          "path": "command/opencode-harness-bridge.md"
+        }
+      ],
+      "skills": [
+        {
+          "name": "harness-convert",
+          "path": "skill/harness-convert/SKILL.md"
+        }
+      ]
+    }
+  ]
+}
