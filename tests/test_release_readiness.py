@@ -14,6 +14,7 @@ Invariant matrix (8 tests, one per row):
 - skill/harness-convert/SKILL.md has required YAML frontmatter
 - command/opencode-harness-bridge.md exists and has name frontmatter
 """
+
 from __future__ import annotations
 
 import json
@@ -50,8 +51,7 @@ def test_pyproject_version_matches_package_version() -> None:
     pyproject_version = _read_pyproject()["project"]["version"]
     package_version = _read_package_version()
     assert pyproject_version == package_version, (
-        f"version drift: pyproject.toml={pyproject_version!r} "
-        f"vs __init__.py={package_version!r}"
+        f"version drift: pyproject.toml={pyproject_version!r} vs __init__.py={package_version!r}"
     )
 
 
@@ -103,7 +103,10 @@ def test_marketplace_plugin_version_matches_package_version() -> None:
 
 
 def test_skill_frontmatter_has_required_fields() -> None:
-    """skill/harness-convert/SKILL.md YAML frontmatter must include name/description/license/compatibility."""
+    """SKILL.md YAML frontmatter must include name/description/license/compatibility.
+
+    The name field must be lowercase kebab-case (per OpenCode skill naming rules).
+    """
     assert SKILL_MD.is_file(), f"missing {SKILL_MD}"
     text = SKILL_MD.read_text(encoding="utf-8")
     assert text.startswith("---"), "SKILL.md must start with YAML frontmatter"
